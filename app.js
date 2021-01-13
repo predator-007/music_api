@@ -44,13 +44,13 @@ mongoose.connection.once('open',()=>{
         }
       let file_name=req.body.name;
       
-      const readableTrackStream = new Readable();
+    const readableTrackStream = new Readable();
     readableTrackStream.push(req.file.buffer);
     readableTrackStream.push(null);
 
-      var writestream=gfs.createWriteStream({filename:file_name});
-      readableTrackStream.pipe(writestream);
-      writestream.on('close',(file)=>{
+    var writestream=gfs.createWriteStream({filename:file_name});
+    readableTrackStream.pipe(writestream);
+    writestream.on('close',(file)=>{
         res.send('file created :'+file.filename);
       });
 
@@ -83,4 +83,5 @@ mongoose.connection.once('open',()=>{
     });
     
 });
-app.listen(5000);
+
+app.listen(process.env.PORT || 3000);
