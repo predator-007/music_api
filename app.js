@@ -29,7 +29,9 @@ mongoose.connection.once('open',()=>{
     
     var gfs=gridfs(mongoose.connection.db);
     
-    
+    app.get('/',(req,res)=>{
+      res.send("this is an music API")
+    });
     
     app.post('/write',(req,res)=>{
     const storage = multer.memoryStorage()
