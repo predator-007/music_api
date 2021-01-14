@@ -59,13 +59,39 @@ mongoose.connection.once('open',()=>{
     
     app.get('/read/:name',(req,res)=>{
     let name=req.params.name;
+    /*
+    var trackid=new Object("5fff04c0ecbd75002416b59e"); 
+    let gridfsbucket= new mongoose.mongo.GridFSBucket(mongoose.connection.db,{
+      chunkSizeBytes:1024,
+      bucketName:'tracks'
+    });
+    let downloadStream=gridfsbucket.openDownloadStreamByName({filename:"krish"});
+    downloadStream.on('data',(chunck)=>{
+      res.write(chunck);
+    });
+  
+    downloadStream.on('error',()=>{
+      res.sendStatus(404);
+    });   
+    downloadStream.on('end',()=>{
+      res.end();
+    })
+    */
     gfs.exist({filename:name},(err,file)=>{
       if(err ||!file)
       res.send("file is not found");
       else{
         res.set('content-type','audio/mp3');
+        res.set('accept-ranges','bytes');
         var readstream=gfs.createReadStream({filename:name});
-        readstream.pipe(res);
+        var bufferArray=[];
+        readstream.on('data',(chunck)=>{
+          bufferArray.push(chunck);
+        });
+        readstream.on('end',()=>{
+          res.send(Buffer.concat(bufferArray));
+        });
+        
       }
     });
     });
